@@ -1,0 +1,8 @@
+db:
+  host: "integration.ccp9gzppoecz.ap-south-1.rds.amazonaws.com"
+  port: "3306"
+  dbname: "integration"
+  username: "integration"
+  password: "![khH8lKPaK+sfTUSqdpf7lQ==]"
+  
+  

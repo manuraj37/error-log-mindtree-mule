@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="f944cc2a-8860-4843-9050-9d1b2fa1ae89" >
+		<db:my-sql-connection host="${db.host}" port="${db.port}" user="${db.username}" password="${secure::db.password}" database="${db.dbname}" />
+	</db:config>
+	<flow name="getDBdataFlow" doc:id="018b61f5-50b5-4fd3-8de8-92afec7eb6cd" >
+		<db:select doc:name="Select" doc:id="1e3f9111-8d06-4d66-84d3-eaf7c7407c71" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT * FROM errordetails;]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="edf1500e-cee9-49f1-bfed-f0909065d5d1" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map {
+  servicename: $.servicename,
+  source: $.source,
+  target: $.target,
+  errormsg: $.errormsg,
+  payload: $.payload,
+  errortime: $.errortime
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="4a1b6798-f012-4398-84c2-a1172e122dfb" message="#[payload]"/>
+	</flow>
+</mule>
